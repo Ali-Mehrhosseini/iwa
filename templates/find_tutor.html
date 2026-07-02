@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Find Tutor{% endblock %}
+
+{% block content %}
+<h1 class="text-center mt-5 p-5 border border-primary">Find a Tutor</h1>
+
+    <div class="container">
+        <div class="row">
+            {% for app in application_list %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img class="card-img-top p-5" src="{{ url_for('static', filename='images/' + app.name|lower + '.png') }}" alt="{{ app.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title display-4">{{ app.name }}</h5>
+                        <p class="card-text">{{ app.subject }}</p>
+                        <p class="card-text">{{ app.description }}</p>
+                        <a href="{{ url_for('tutor_detail', tutor_id=app.id) }}" class="btn btn-primary">View Profile</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

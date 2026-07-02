@@ -1,0 +1,23 @@
+.black-border {
+  border: 2px solid rgb(67, 67, 67);
+}
+
+/* Apply background only to auth pages */
+body.auth-page {
+    min-height: 100vh;  
+    background-image: url("/static/images/login-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+body.auth-page main {
+    background-color: transparent;
+    max-width: 600px;
+    margin: 50px auto;
+}
+
+body.auth-page .black-border {
+    background-color: transparent;
+    padding: 30px;
+} 
