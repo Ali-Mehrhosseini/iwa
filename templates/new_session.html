@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule Session{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card shadow border-0">
+            <div class="card-header bg-dark text-warning py-3">
+                <h1 class="h3 mb-1 text-center">Schedule a Quest Session</h1>
+                <p class="mb-0 text-light text-center">Choose the quest, day, time, and location.</p>
+            </div>
+
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% if quests %}
+                    <form method="post" action="{{ url_for('new_session') }}">
+                        <div class="mb-3">
+                            <label for="quest_id" class="form-label fw-semibold">Quest</label>
+                            <select class="form-select" id="quest_id" name="quest_id" required>
+                                <option value="" selected disabled>Choose a quest...</option>
+                                {% for quest in quests %}
+                                    <option value="{{ quest.id }}">
+                                        {{ quest.title }} — {{ quest.duration_minutes }} min
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="day" class="form-label fw-semibold">Day</label>
+                                <select class="form-select" id="day" name="day" required>
+                                    <option value="" selected disabled>Choose a day...</option>
+                                    {% for day in days %}
+                                        <option value="{{ day }}">{{ day }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="start_time" class="form-label fw-semibold">Starting Time</label>
+                                <input type="time" class="form-control" id="start_time" name="start_time" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="location" class="form-label fw-semibold">Location</label>
+                            <select class="form-select" id="location" name="location" required>
+                                <option value="" selected disabled>Choose a location...</option>
+                                {% for loc in locations %}
+                                    <option value="{{ loc }}">{{ loc }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">The app checks for location conflicts before saving.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('quests') }}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-warning fw-semibold text-dark">Schedule Session</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="text-center py-4">
+                        <h2 class="h5">No quests available</h2>
+                        <p class="text-muted mb-3">Create a quest before scheduling a session.</p>
+                        <a href="{{ url_for('new_quest') }}" class="btn btn-warning fw-semibold text-dark">Create Quest</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

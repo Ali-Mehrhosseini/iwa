@@ -2,6 +2,114 @@
   border: 2px solid rgb(220, 0, 0);
 }
 
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.site-navbar {
+    background-color: #07152d;
+    border-bottom: 2px solid #d8a742;
+    min-height: 92px;
+}
+
+.site-navbar .container-fluid {
+    position: relative;
+}
+
+.site-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 86px;
+    height: 76px;
+    margin-right: 22px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.site-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.site-navbar .nav-link {
+    color: #f7e7b0;
+    font-weight: 600;
+    text-shadow: none;
+}
+
+.site-navbar .nav-link:hover,
+.site-navbar .nav-link:focus {
+    color: #ffd966;
+}
+
+.navbar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #f7d878;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-shadow:
+        0 1px 0 #fff2b8,
+        0 3px 8px rgba(0, 0, 0, 0.65);
+    background-image: linear-gradient(#fff2b8, #d8a742 55%, #8f5f1d);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+}
+
+.nav-auth-btn {
+    color: #f7e7b0;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 6px 16px;
+    border: 1px solid rgba(216, 167, 66, 0.85);
+    border-radius: 6px;
+    background-color: rgba(216, 167, 66, 0.12);
+    text-shadow: none;
+}
+
+.nav-auth-btn:hover,
+.nav-auth-btn:focus {
+    color: #212529;
+    background-color: #ffd966;
+    border-color: #ffd966;
+    text-shadow: none;
+}
+
+.nav-auth-btn-register {
+    background-color: rgba(216, 167, 66, 0.24);
+}
+
+@media (max-width: 900px) {
+    .navbar-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 700px) {
+    .navbar-title {
+        display: none;
+    }
+}
+
 /* Apply background only to auth pages */
 body.auth-page {
     min-height: 100vh;  
@@ -10,7 +118,7 @@ body.auth-page {
     background-position: center;
     background-repeat: no-repeat;
 }
-      
+
 body.auth-page main {
     max-width: 600px;
     margin: 50px auto;
@@ -19,4 +127,39 @@ body.auth-page main {
 body.auth-page .auth-form {
     background-color: rgba(0, 0, 0, 0.7);
     border-color: rgba(253, 253, 253, 0.5) !important;
+}
+
+.quest-card {
+    overflow: hidden;
+}
+
+.quest-card-img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+}
+
+.quest-card-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f7e7b0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background:
+        linear-gradient(rgba(7, 21, 45, 0.82), rgba(7, 21, 45, 0.82)),
+        url("/static/images/logo-mark.png") center / contain no-repeat;
+    background-color: #07152d;
+}
+
+.site-footer {
+    background-color: #3f51b5;
+    background-image:
+        linear-gradient(rgba(63, 81, 181, 0.75), rgba(63, 81, 181, 0.75)),
+        url("/static/images/footer.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }

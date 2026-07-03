@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Quests{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1">Quests</h1>
+        <p class="text-muted mb-0">Browse the available guild quests.</p>
+    </div>
+    {% if current_user.is_guild_master() %}
+        <a href="{{ url_for('new_quest') }}" class="btn btn-warning fw-semibold text-dark">New Quest</a>
+    {% endif %}
+</div>
+
+<div class="row g-4">
+    {% for quest in quests %}
+        <div class="col-md-6 col-xl-4">
+            <div class="card quest-card h-100 shadow-sm border-0">
+                {% if quest.image %}
+                    <img
+                        src="{{ url_for('static', filename='uploads/' ~ quest.image) }}"
+                        class="card-img-top quest-card-img"
+                        alt="{{ quest.title }}"
+                    >
+                {% else %}
+                    <div class="quest-card-img quest-card-placeholder">
+                        <span>{{ quest.quest_type }}</span>
+                    </div>
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                        <h2 class="h5 mb-0">{{ quest.title }}</h2>
+                        <span class="badge text-bg-warning text-dark">{{ difficulty_labels.get(quest.difficulty, quest.difficulty) }}</span>
+                    </div>
+
+                    <p class="card-text text-muted flex-grow-1">{{ quest.description }}</p>
+
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <span class="badge text-bg-primary">{{ quest.quest_type }}</span>
+                        <span class="badge text-bg-secondary">{{ quest.duration_minutes }} min</span>
+                    </div>
+                    <a href="#" class="btn btn-outline-warning fw-semibold mt-3">View Details</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center text-muted py-5">
+                    No quests have been created yet.
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
