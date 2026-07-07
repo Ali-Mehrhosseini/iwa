@@ -9,7 +9,7 @@ import users_dao
 import os
 
 app = Flask(__name__)
-app.secret_key = 'AliMehrhosseinilive_EjtAS4MInrYlCX0sXD9t55jsLDBx9OQk'
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-me')
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
