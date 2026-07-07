@@ -154,6 +154,12 @@ body.auth-page .auth-form {
     background-color: #07152d;
 }
 
+.session-detail-img {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+}
+
 .site-footer {
     background-color: #3f51b5;
     background-image:

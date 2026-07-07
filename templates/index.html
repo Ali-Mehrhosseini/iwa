@@ -3,6 +3,69 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1 class="text-center mt-5 p-5 border border-primary">Welcome to the Home Page</h1>
-{% endblock %}
+<form method="get" action="/">
+    <label for="day">Day</label>
+    <select id="day" name="day">
+        <option value="">All days</option>
+        {% for d in days %}
+        <option value="39">39</option>
+        {% endfor %}
+    </select>
 
+    <!-- same pattern: quest_type over quest_types, difficulty over difficulties -->
+    <button type="submit">Filter</button>
+</form>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1">Quest Board</h1>
+        <p class="text-muted mb-0">This week's scheduled guild sessions.</p>
+    </div>
+    {% if current_user.is_authenticated and current_user.is_guild_master() %}
+        <a href="{{ url_for('new_session') }}" class="btn btn-warning fw-semibold text-dark">Schedule Session</a>
+    {% endif %}
+</div>
+
+{% if sessions %}
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Quest</th>
+                        <th>Type</th>
+                        <th>Difficulty</th>
+                        <th>Duration</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                        <tr>
+                            <td>{{ session.day }}</td>
+                            <td>{{ session.start_time }}</td>
+                            <td class="fw-semibold">
+                                <a href="{{ url_for('session_detail', session_id=session.id) }}" class="link-dark link-underline-opacity-0 link-underline-opacity-75-hover">
+                                    {{ session.title }}
+                                </a>
+                            </td>
+                            <td><span class="badge text-bg-primary">{{ session.quest_type }}</span></td>
+                            <td><span class="badge text-bg-warning text-dark">{{ difficulty_labels.get(session.difficulty, session.difficulty) }}</span></td>
+                            <td>{{ session.duration_minutes }} min</td>
+                            <td>{{ session.location }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <h2 class="h4">No sessions scheduled yet</h2>
+            <p class="text-muted mb-0">A guild master can schedule sessions from the quest board.</p>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

@@ -48,3 +48,9 @@ def get_quest_by_id(quest_id):
         row["description"],
         row["image"],
     )
+
+def delete_quest(quest_id):
+    conn = get_connection()
+    conn.execute("DELETE FROM quests WHERE id = ?", (quest_id,))
+    conn.commit()
+    conn.close()

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}{{ s.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow border-0 overflow-hidden">
+            {% if s.image %}
+                <img
+                    src="{{ url_for('static', filename='uploads/' ~ s.image) }}"
+                    class="session-detail-img"
+                    alt="{{ s.title }}"
+                >
+            {% else %}
+                <div class="session-detail-img quest-card-placeholder">
+                    <span>{{ s.quest_type }}</span>
+                </div>
+            {% endif %}
+
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <h1 class="mb-2">{{ s.title }}</h1>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge text-bg-primary">{{ s.quest_type }}</span>
+                            <span class="badge text-bg-warning text-dark">
+                                {{ difficulty_labels.get(s.difficulty, s.difficulty) }}
+                            </span>
+                            <span class="badge text-bg-secondary">{{ s.duration_minutes }} min</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">Back to Board</a>
+                </div>
+
+                <p class="lead text-muted">{{ s.description }}</p>
+
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered align-middle mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="table-dark w-25">Day</th>
+                                <td>{{ s.day }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-dark">Starting Time</th>
+                                <td>{{ s.start_time }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-dark">Location</th>
+                                <td>{{ s.location }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-dark">Quest Type</th>
+                                <td>{{ s.quest_type }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-dark">Difficulty</th>
+                                <td>{{ difficulty_labels.get(s.difficulty, s.difficulty) }}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-dark">Duration</th>
+                                <td>{{ s.duration_minutes }} minutes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="my-4">
+
+                <section>
+                    <h2 class="h4 mb-3">Party Availability</h2>
+                    <div class="row g-3 mb-4">
+                        {% for role, capacity in role_capacities.items() %}
+                            {% set reserved = role_totals.get(role, 0) %}
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 h-100">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <strong>{{ role }}</strong>
+                                        <span>{{ capacity - reserved }} left</span>
+                                    </div>
+                                    <div class="progress" role="progressbar" aria-label="{{ role }} places">
+                                        <div
+                                            class="progress-bar bg-warning text-dark"
+                                            style="width: {{ (reserved / capacity * 100) if capacity else 0 }}%"
+                                        >
+                                            {{ reserved }}/{{ capacity }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <h2 class="h4 mb-3">Join this Quest Session</h2>
+
+                    {% if current_user.is_authenticated and not current_user.is_guild_master() %}
+                        {% if user_participation %}
+                            <div class="alert alert-success mb-0">
+                                You already joined this session as {{ user_participation.role }}
+                                for {{ user_participation.places }} place{% if user_participation.places != 1 %}s{% endif %}.
+                            </div>
+                        {% else %}
+                            <form method="post" action="{{ url_for('join_session', session_id=s.id) }}">
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-6">
+                                        <label for="role" class="form-label fw-semibold">Party Role</label>
+                                        <select id="role" name="role" class="form-select" required>
+                                            {% for role, capacity in role_capacities.items() %}
+                                                {% set remaining = capacity - role_totals.get(role, 0) %}
+                                                <option value="{{ role }}" {% if remaining <= 0 %}disabled{% endif %}>
+                                                    {{ role }} — {{ remaining }} place{% if remaining != 1 %}s{% endif %} left
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="places" class="form-label fw-semibold">Reserved Places</label>
+                                        <select id="places" name="places" class="form-select" required>
+                                            <option value="1">1 place</option>
+                                            <option value="2">2 places</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-warning fw-semibold text-dark w-100">
+                                            Join Session
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        {% endif %}
+                    {% elif not current_user.is_authenticated %}
+                        <div class="alert alert-info mb-0">
+                            You must log in to join this quest session.
+                            <a href="{{ url_for('login') }}" class="alert-link">Log in here</a>.
+                        </div>
+                    {% elif current_user.is_guild_master() %}
+                        <div class="alert alert-warning mb-0">
+                            The Guild Master can browse quest sessions but cannot join them.
+                        </div>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

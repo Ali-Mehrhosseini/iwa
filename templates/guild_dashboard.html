@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mb-4">Guild Dashboard</h1>
+
+<div class="row g-3">
+
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h2 class="card-title">{{ stats.quest_count }}</h2>
+                <p class="card-text text-muted">Quests</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h2 class="card-title">{{ stats.session_count }}</h2>
+                <p class="card-text text-muted">Sessions</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h2 class="card-title">{{ stats.total_places }}</h2>
+                <p class="card-text text-muted">Places booked</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
