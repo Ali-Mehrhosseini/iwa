@@ -41,7 +41,7 @@
                         <span class="badge text-bg-primary">{{ quest.quest_type }}</span>
                         <span class="badge text-bg-secondary">{{ quest.duration_minutes }} min</span>
                     </div>
-                    <a href="#" class="btn btn-outline-warning fw-semibold mt-3">View Details</a>
+                    <a href="{{ url_for('quest_detail', quest_id=quest.id) }}" class="btn btn-outline-warning fw-semibold mt-3">View Details</a>
                 </div>
             </div>
         </div>

@@ -64,3 +64,17 @@ def get_session_by_id(session_id):
     conn.close()
     return row
 
+
+def get_sessions_for_quest(quest_id):
+    conn = get_connection()
+    rows = conn.execute(
+        """
+        SELECT id, day, start_time, location
+        FROM quest_sessions
+        WHERE quest_id = ?
+        ORDER BY start_minute
+        """,
+        (quest_id,),
+    ).fetchall()
+    conn.close()
+    return rows

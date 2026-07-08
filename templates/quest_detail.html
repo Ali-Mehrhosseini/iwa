@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quest.title }}{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm">
+    {% if quest.image %}
+    <img src="{{ url_for('static', filename='uploads/' ~ quest.image) }}" class="card-img-top" alt="{{ quest.title }}">
+    {% endif %}
+
+    <div class="card-body">
+        <h1>{{ quest.title }}</h1>
+
+        <p class="text-muted">
+            {{ quest.quest_type }} ·
+            {{ difficulty_labels.get(quest.difficulty, quest.difficulty) }} ·
+            {{ quest.duration_minutes }} min
+        </p>
+
+        <p>{{ quest.description }}</p>
+        <hr>
+
+        <h2 class="h5">Scheduled Sessions</h2>
+
+        {% if sessions %}
+        <ul class="list-group mb-3">
+            {% for session in sessions %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>{{ session.day }}</strong>
+                    at {{ session.start_time }}
+                    — {{ session.location }}
+                </span>
+
+                <a href="{{ url_for('session_detail', session_id=session.id) }}" class="btn btn-sm btn-outline-primary">
+                    View session
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No sessions have been scheduled for this quest yet.</p>
+        {% endif %}
+
+
+        <a href="{{ url_for('quests') }}" class="btn btn-outline-secondary">
+            Back to quests
+        </a>
+    </div>
+</div>
+{% endblock %}
