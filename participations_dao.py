@@ -164,3 +164,17 @@ def get_guild_stats():
         'session_count': session_count,
         'total_places': total_places,
     }
+
+def session_has_participations(session_id):
+    conn = get_connection()
+    row = conn.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM participations
+        WHERE session_id = ?
+        """,
+        (session_id,),
+    ).fetchone()
+    conn.close()
+
+    return row["count"] > 0

@@ -169,3 +169,18 @@ body.auth-page .auth-form {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+.site-footer {
+    font-size: 0.9rem;
+}
+
+.site-footer h6 {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.site-footer p {
+    margin-bottom: 0.25rem;
+    line-height: 1.35;
+}
+

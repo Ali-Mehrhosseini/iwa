@@ -5,7 +5,7 @@
 {% block content %}
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body border p-4">
-        <form method="get" action="/" class="row g-4 align-items-end justify-content-center mx-auto" style="max-width: 1500px;">
+        <form method="get" action="/" class="row g-4 align-items-end justify-content-center mx-auto" style="max-width: 1200px;">
             <div class="col-md-3">
                 <label for="day" class="form-label">Day</label>
                 <select id="day" name="day" class="form-select">
@@ -38,9 +38,19 @@
                 </select>
             </div>
 
+            <div class="col-md-3">
+                <label for="role" class="form-label">Available role</label>
+                <select id="role" name="role" class="form-select">
+                    <option value="">Any role</option>
+                    {% for role in roles %}
+                        <option value="{{ role }}" {% if selected_role == role %}selected{% endif %}>{{ role }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="col-md-auto d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">Clear</a>
+                <a href="{{ url_for('home') }}" class="btn btn-outline-danger">Clear</a>
             </div>
         </form>
     </div>

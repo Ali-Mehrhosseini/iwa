@@ -73,9 +73,17 @@ def home():
     selected_day = request.args.get("day")
     selected_quest_type = request.args.get("quest_type")
     selected_difficulty = request.args.get("difficulty")
+    selected_role = request.args.get("role")
+
+    if selected_role not in ROLE_CAPACITIES:
+        selected_role = None
 
     sessions = quest_sessions_dao.get_week_program(
-        day=selected_day, quest_type=selected_quest_type, difficulty=selected_difficulty
+        day=selected_day,
+        quest_type=selected_quest_type,
+        difficulty=selected_difficulty,
+        role=selected_role,
+        role_capacity=ROLE_CAPACITIES.get(selected_role),
     )
 
     return render_template(
@@ -84,9 +92,11 @@ def home():
         days=DAYS,
         quest_types=QUEST_TYPES,
         difficulties=DIFFICULTIES,
+        roles=ROLE_CAPACITIES.keys(),
         selected_day=selected_day,
         selected_quest_type=selected_quest_type,
         selected_difficulty=selected_difficulty,
+        selected_role=selected_role,
         difficulty_labels=DIFFICULTY_LABELS,
     )
 
@@ -203,13 +213,13 @@ def new_quest():
         difficulty = request.form.get("difficulty")
         description = request.form.get("description")
         image = request.files.get("image")
-        if not image or image.filename == '':
-            flash('A promotional image is required.', 'danger')
-            return redirect(url_for('new_quest'))
+        if not image or image.filename == "":
+            flash("A promotional image is required.", "danger")
+            return redirect(url_for("new_quest"))
 
         image_filename = secure_filename(image.filename)
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
-        
+        image.save(os.path.join(app.config["UPLOAD_FOLDER"], image_filename))
+
         quests_dao.create_quest(
             title, duration_minutes, quest_type, difficulty, description, image_filename
         )
@@ -283,12 +293,16 @@ def session_detail(session_id):
     session_row = quest_sessions_dao.get_session_by_id(session_id)
     if session_row is None:
         abort(404)
+
     role_totals = participations_dao.get_role_totals(session_id)
+    has_participations = participations_dao.session_has_participations(session_id)
+
     user_participation = None
     if current_user.is_authenticated:
         user_participation = participations_dao.get_user_participation(
             session_id, current_user.id
         )
+
     return render_template(
         "session_detail.html",
         s=session_row,
@@ -296,6 +310,7 @@ def session_detail(session_id):
         role_capacities=ROLE_CAPACITIES,
         role_totals=role_totals,
         user_participation=user_participation,
+        has_participations=has_participations,
     )
 
 
@@ -449,7 +464,41 @@ def guild_dashboard():
         abort(403)
 
     stats = participations_dao.get_guild_stats()
-    return render_template("guild_dashboard.html", stats=stats)
+    sessions = quest_sessions_dao.get_all_sessions_with_quest()
+
+    session_rows = []
+
+    for session in sessions:
+        role_totals = participations_dao.get_role_totals(session["id"])
+        total_reserved = sum(role_totals.values())
+
+        remaining_by_role = {}
+        for role, capacity in ROLE_CAPACITIES.items():
+            reserved = role_totals.get(role, 0)
+            remaining_by_role[role] = capacity - reserved
+
+        if role_totals:
+            most_requested_role = max(role_totals, key=role_totals.get)
+        else:
+            most_requested_role = "None yet"
+
+        session_rows.append(
+            {
+                "session": session,
+                "role_totals": role_totals,
+                "total_reserved": total_reserved,
+                "remaining_by_role": remaining_by_role,
+                "most_requested_role": most_requested_role,
+                "has_participations": total_reserved > 0,
+            }
+        )
+
+    return render_template(
+        "guild_dashboard.html",
+        stats=stats,
+        session_rows=session_rows,
+        role_capacities=ROLE_CAPACITIES,
+    )
 
 
 @app.route("/quests/<int:quest_id>")
@@ -465,4 +514,74 @@ def quest_detail(quest_id):
         quest=quest,
         sessions=sessions,
         difficulty_labels=DIFFICULTY_LABELS,
+    )
+
+
+@app.route("/sessions/<int:session_id>/cancel", methods=["POST"])
+@login_required
+def cancel_session(session_id):
+    if not current_user.is_guild_master():
+        abort(403)
+
+    session_row = quest_sessions_dao.get_session_by_id(session_id)
+    if session_row is None:
+        abort(404)
+
+    if participations_dao.session_has_participations(session_id):
+        flash(
+            "This session cannot be cancelled because adventurers have already joined.",
+            "danger",
+        )
+        return redirect(url_for("session_detail", session_id=session_id))
+
+    quest_sessions_dao.delete_session(session_id)
+    flash("Session cancelled successfully.", "success")
+    return redirect(url_for("home"))
+
+
+@app.route("/sessions/<int:session_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_session(session_id):
+    if not current_user.is_guild_master():
+        abort(403)
+
+    session_row = quest_sessions_dao.get_session_by_id(session_id)
+    if session_row is None:
+        abort(404)
+
+    if participations_dao.session_has_participations(session_id):
+        flash(
+            "This session cannot be modified because adventurers have already joined.",
+            "danger",
+        )
+        return redirect(url_for("session_detail", session_id=session_id))
+
+    if request.method == "POST":
+        day = request.form.get("day")
+        start_time = request.form.get("start_time")
+        location = request.form.get("location")
+
+        errors = []
+
+        if location not in LOCATIONS:
+            errors.append("Invalid location")
+
+        start_minute = to_start_minute(day, start_time)
+        if start_minute is None:
+            errors.append("Invalid day or time")
+
+        if errors:
+            for error in errors:
+                flash(error, "danger")
+            return redirect(url_for("edit_session", session_id=session_id))
+
+        quest_sessions_dao.update_session(
+            session_id, day, start_time, start_minute, location
+        )
+
+        flash("Session updated successfully.", "success")
+        return redirect(url_for("session_detail", session_id=session_id))
+
+    return render_template(
+        "edit_session.html", s=session_row, days=DAYS, locations=LOCATIONS
     )
