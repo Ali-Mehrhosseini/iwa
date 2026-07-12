@@ -1,4 +1,3 @@
-from email.mime import image
 
 from flask import Flask, flash, request, render_template, redirect, url_for, abort
 from flask_login import (
@@ -101,24 +100,6 @@ def home():
     )
 
 
-@app.route("/about")
-def about():
-    list_of_items = ["Email", "Phone", "Address"]
-    return render_template("about.html", items=list_of_items)
-
-
-@app.route("/tutors")
-def find_tutor():
-    return render_template("find_tutor.html", application_list=application)
-
-
-@app.route("/tutors/<int:tutor_id>")
-def tutor_detail(tutor_id):
-    tutor = next((tutor for tutor in application if tutor["id"] == tutor_id), None)
-    if tutor:
-        return render_template("tutor_detail.html", tutor=tutor)
-    else:
-        return "Tutor not found", 404
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -126,12 +107,11 @@ def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        profile_img = request.files.get("profile_img")
 
         user = users_dao.get_user_by_email(email)
         stored_password_hash = users_dao.get_password_hash(email)
 
-        if user is None or not check_password_hash(stored_password_hash, password):
+        if user is None or stored_password_hash is None or not check_password_hash(stored_password_hash, password):
             flash("Invalid email or password", "danger")
             return render_template("login.html", error="Invalid email or password")
         else:
@@ -192,13 +172,11 @@ def logout():
 
 
 @app.route("/quests")
-@login_required
 def quests():
     all_quests = quests_dao.get_all_quests()
     return render_template(
         "quests.html", quests=all_quests, difficulty_labels=DIFFICULTY_LABELS
     )
-
 
 @app.route("/quests/new", methods=["GET", "POST"])
 @login_required
@@ -299,10 +277,7 @@ def session_detail(session_id):
 
     user_participation = None
     if current_user.is_authenticated:
-        user_participation = participations_dao.get_user_participation(
-            session_id, current_user.id
-        )
-
+        user_participation = participations_dao.get_user_participation(session_id, current_user.id)
     return render_template(
         "session_detail.html",
         s=session_row,
@@ -550,10 +525,7 @@ def edit_session(session_id):
         abort(404)
 
     if participations_dao.session_has_participations(session_id):
-        flash(
-            "This session cannot be modified because adventurers have already joined.",
-            "danger",
-        )
+        flash("This session cannot be modified because adventurers have already joined.", "danger"  )
         return redirect(url_for("session_detail", session_id=session_id))
 
     if request.method == "POST":
@@ -570,6 +542,11 @@ def edit_session(session_id):
         if start_minute is None:
             errors.append("Invalid day or time")
 
+        if not errors:
+            duration = session_row["duration_minutes"]
+            end_minute = start_minute + duration
+            if quest_sessions_dao.has_location_conflict_excluding(location, start_minute, end_minute, session_id):
+                errors.append(f"{location} is already booked at that time")
         if errors:
             for error in errors:
                 flash(error, "danger")
@@ -582,6 +559,4 @@ def edit_session(session_id):
         flash("Session updated successfully.", "success")
         return redirect(url_for("session_detail", session_id=session_id))
 
-    return render_template(
-        "edit_session.html", s=session_row, days=DAYS, locations=LOCATIONS
-    )
+    return render_template("edit_session.html", s=session_row, days=DAYS, locations=LOCATIONS)

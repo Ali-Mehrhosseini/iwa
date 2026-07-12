@@ -161,10 +161,7 @@ body.auth-page .auth-form {
 }
 
 .site-footer {
-    background-color: #3f51b5;
-    background-image:
-        linear-gradient(rgba(63, 81, 181, 0.75), rgba(63, 81, 181, 0.75)),
-        url("/static/images/footer.png");
+    background-color: #07152d;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -184,3 +181,10 @@ body.auth-page .auth-form {
     line-height: 1.35;
 }
 
+.footer-copyright {
+    background-color: rgba(0, 0, 0, 0.297);
+}
+
+.filter-form {
+    max-width: 1200px;
+}
