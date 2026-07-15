@@ -8,29 +8,42 @@
 <div class="container">
     <form action="{{ url_for('register') }}" method="post" enctype="multipart/form-data" class="auth-form mt-5 p-5 border border-white rounded">
         <h1 class="text-white text-center mb-4 fw-bold">Create Your Account</h1>
-        <div class="form-group">
-            <label for="name" class="form-label text-white">Name:</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+
+        {% if errors %}
+        <div class="alert alert-danger" role="alert">
+            <ul class="mb-0">
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
         </div>
-        <div class="form-group mt-3">
-            <label for="lastName" class="form-label text-white">LastName:</label>
-            <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter your last name" required>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="name" class="form-label text-white">Display name:</label>
+            <input type="text" class="form-control" id="name" name="name" maxlength="80"
+                value="{{ form_data.get('name', '') }}" placeholder="Enter your display name" required>
         </div>
         <div class="form-group mt-3">
             <label for="email" class="form-label text-white">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            <input type="email" class="form-control" id="email" name="email" maxlength="254"
+                value="{{ form_data.get('email', '') }}" placeholder="Enter your email" required>
         </div>
         <div class="form-group mt-3">
             <label for="password" class="form-label text-white">Password:</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            <input type="password" class="form-control" id="password" name="password" minlength="8"
+                placeholder="At least 8 characters" required>
         </div>
         <div class="form-group mt-3">
             <label for="confirm_password" class="form-label text-white">Confirm Password:</label>
-            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" minlength="8"
+                placeholder="Confirm your password" required>
         </div>
         <div class="form-group mt-3">
             <label class="form-label text-white" for="profile_img">Upload Profile Image</label>
-            <input type="file" class="form-control" id="profile_img" name="profile_img" accept="image/*">
+            <input type="file" class="form-control" id="profile_img" name="profile_img"
+                accept=".png,.jpg,.jpeg,.gif,.webp,image/png,image/jpeg,image/gif,image/webp">
+            <div class="form-text text-light">Optional. PNG, JPG, GIF, or WEBP.</div>
         </div>
         <button type="submit" class="btn btn-primary  mt-4 w-100 bg-warning fw-bold text-dark">Register</button>
     </form>

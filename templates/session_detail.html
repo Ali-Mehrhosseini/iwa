@@ -108,9 +108,9 @@
                                     <strong>{{ role }}</strong>
                                     <span>{{ capacity - reserved }} left</span>
                                 </div>
-                                <div class="progress" role="progressbar" aria-label="{{ role }} places">
-                                    <div class="progress-bar bg-warning text-dark"
-                                        style="width: {{ (reserved / capacity * 100) if capacity else 0 }}%">
+                                <div class="progress" role="progressbar" aria-label="{{ role }} places reserved"
+                                    aria-valuenow="{{ reserved }}" aria-valuemin="0" aria-valuemax="{{ capacity }}">
+                                    <div class="progress-bar bg-warning text-dark progress-fill-{{ reserved }}-of-{{ capacity }}">
                                         {{ reserved }}/{{ capacity }}
                                     </div>
                                 </div>

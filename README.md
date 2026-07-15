@@ -24,9 +24,7 @@ Desktop (responsive layout via Bootstrap).
 
 ## Deployed Application
 
-**PythonAnywhere URL:** `https://YOUR_USERNAME.pythonanywhere.com`
-
-*(Replace with actual URL after deployment.)*
+**PythonAnywhere URL:** [https://alimehrhosseini.pythonanywhere.com](https://alimehrhosseini.pythonanywhere.com/)
 
 ---
 
@@ -38,7 +36,7 @@ The application uses a **simulated current day and time** within the fictional w
 Simulated time: Wednesday 12:00
 ```
 
-This is set in `app.py` at line 52:
+This is set by `SIMULATED_NOW_MINUTE` in `app.py`:
 
 ```python
 SIMULATED_NOW_MINUTE = 3600   # Wednesday 12:00 → 2×1440 + 12×60
@@ -93,14 +91,14 @@ All accounts use the password: **`test1234`**
 | Day       | Time  | Quest                   | Location        |
 |-----------|-------|-------------------------|-----------------|
 | Monday    | 10:00 | The Gate of Pasargad    | Pasargad Gate   |
-| Monday    | 15:00 | The Trial of Alborz     | Anahita Garden  |
+| Monday    | 15:00 | The Trial of Alborz     | Pasargad Gate   |
 | Tuesday   | 09:00 | The Feather of Simurgh  | Anahita Garden  |
 | Tuesday   | 14:00 | The Flame of Azar       | Azar Temple     |
 | Wednesday | 14:00 | The Chain of Zahhak     | Azar Temple     |
 | Wednesday | 16:30 | Spear of Rostam         | Anahita Garden  |
 | Thursday  | 10:00 | The Trial of Alborz     | Azar Temple     |
 | Thursday  | 10:00 | The Flame of Azar       | Anahita Garden  |
-| Thursday  | 17:00 | The Trial of Alborz     | Pasargad Gate   |
+| Friday    | 10:00 | The Gate of Pasargad    | Anahita Garden  |
 | Friday    | 16:00 | Spear of Rostam         | Azar Temple     |
 | Saturday  | 11:00 | The Feather of Simurgh  | Anahita Garden  |
 | Saturday  | 17:00 | The Chain of Zahhak     | Azar Temple     |
@@ -111,24 +109,25 @@ All accounts use the password: **`test1234`**
 
 All three party roles have reservations:
 
-| Adventurer | Quest                  | Role    | Places |
-|-----------|------------------------|---------|--------|
-| Ali       | The Chain of Zahhak    | Warrior | 1      |
-| Arya      | The Chain of Zahhak    | Warrior | 1      |
-| Sara      | Spear of Rostam        | Mage    | 2      |
-| Kian      | The Flame of Azar      | Healer  | 2      |
-| Mina      | Spear of Rostam        | Warrior | 1      |
-| Saghar    | The Feather of Simurgh | Healer  | 1      |
-| Saghar    | The Flame of Azar      | Mage    | 2      |
-| Saghar    | The Gate of Pasargad   | Mage    | 1      |
-| Hossein   | The Flame of Azar      | Warrior | 1      |
-| Hossein   | Spear of Rostam        | Warrior | 1      |
+| Adventurer | Quest                   | Day       | Time  | Location        | Role    | Places |
+|------------|-------------------------|-----------|-------|-----------------|---------|--------|
+| Saghar     | The Feather of Simurgh  | Tuesday   | 09:00 | Anahita Garden  | Healer  | 1      |
+| Hossein    | The Flame of Azar       | Tuesday   | 14:00 | Azar Temple     | Warrior | 1      |
+| Saghar     | The Flame of Azar       | Tuesday   | 14:00 | Azar Temple     | Mage    | 2      |
+| Ali        | The Chain of Zahhak     | Wednesday | 14:00 | Azar Temple     | Warrior | 1      |
+| Arya       | The Chain of Zahhak     | Wednesday | 14:00 | Azar Temple     | Warrior | 1      |
+| Hossein    | Spear of Rostam         | Wednesday | 16:30 | Anahita Garden  | Warrior | 1      |
+| Kian       | The Flame of Azar       | Thursday  | 10:00 | Anahita Garden  | Healer  | 2      |
+| Mina       | Spear of Rostam         | Friday    | 16:00 | Azar Temple     | Warrior | 1      |
+| Sara       | Spear of Rostam         | Friday    | 16:00 | Azar Temple     | Mage    | 2      |
+| Saghar     | The Flame of Azar       | Sunday    | 16:00 | Azar Temple     | Warrior | 2      |
 
 ### Testing Scenarios
 
-- **Locked participations (not modifiable):** Log in as Saghar or Hossein — their Tuesday participations are locked because those sessions are before Wednesday 20:00.
-- **Modifiable participations:** Log in as Sara, Kian, or Mina — their Thursday/Friday participations can still be modified or cancelled.
-- **Sessions with no participants:** Sessions on Monday, Thursday (10:00 Azar Temple), Thursday (17:00), Saturday, and Sunday (16:00) have no participants and are available for joining.
+- **Locked participations (not modifiable):** Log in as Saghar to see her Tuesday 09:00 and 14:00 participations, or as Hossein to see his Tuesday 14:00 and Wednesday 16:30 participations. These sessions start on or before Wednesday 20:00.
+- **Modifiable participations:** Saghar's Sunday 16:00 participation is modifiable. Kian's Thursday 10:00 participation and Sara's and Mina's Friday 16:00 participations are also modifiable.
+- **Fully booked role:** The Healer role in Thursday's 10:00 Flame of Azar session at Anahita Garden is fully booked (2 of 2 places).
+- **Sessions with no participants:** Monday 10:00 and 15:00, Thursday 10:00 at Azar Temple, Friday 10:00, Saturday 11:00 and 17:00, and Sunday 12:00 have no participants and are available for joining.
 
 ---
 
